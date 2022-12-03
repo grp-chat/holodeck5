@@ -207,6 +207,7 @@ const allCommands = [
     new numAndIdCommand("TCR: nope ", 'failed'),
     new numAndIdCommand("TCR: set team ", 'setPlayerTeam'),
     new numAndIdCommand("TCR: award steps ", 'addAwardedSteps'),
+    new numAndIdCommand("TCR: penal ", 'penalties'),
     new messageCommand("TCR: on screen ", 'onScreen'),
     new fixedCommand("TCR: swap teams", 'swapTeams'),
     new fixedCommand("TCR: mind control off", 'mindControlOff'),

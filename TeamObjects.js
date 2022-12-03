@@ -1,5 +1,5 @@
 class TeamObjects {
-    constructor() {
+    constructor(config) {
 
         this.team1Slots = [];
         this.team2Slots = [];
@@ -23,6 +23,23 @@ class TeamObjects {
             {x:9, y:2, area: "area1"},
             {x:10, y:2, area: "area1"},
         ];
+
+        this.powerList = config;
+
+        this.defaultPowersByTeam = {
+            "1": [this.powerList[3], this.powerList[2],this.powerList[2],this.powerList[2],this.powerList[2],this.powerList[1],this.powerList[1]],
+            "2": [this.powerList[2], this.powerList[2],this.powerList[2],this.powerList[2],this.powerList[2],this.powerList[2]],
+            "0": [],
+        }
+
+        this.penalties = {
+            // "1": {stepsAwardedBeforeGameStarts: -25},
+            // "2": {stepsAwardedBeforeGameStarts: -50},
+            //"3": {spliceObj(playerObj, lastPower) {playerObj.obtainedPowers.splice(lastPower, 1);}},
+            "1": "reduceAwardedSteps25",
+            "2": "reduceAwardedSteps50",
+            "3": "reduceTheLastPower",
+        }
 
     }
 

@@ -63,18 +63,19 @@ class GridSystem {
             40: {x: 0, y: 2}
         }
 
-        this.teamObjects = new TeamObjects;
-
         this.powerList = {
             1: {powerName: "invisibility", duration: 10000, offPowerName: "invisibilityOff", title: "Invisibility"},
             2: {powerName: "blink", title: "Blink"},
             3: {powerName: "stun", title: "EMP Bomb"},
         }
         this.mapDefaultPowers = {
-            //"area1": [this.powerList[3], this.powerList[2],this.powerList[2],this.powerList[2],this.powerList[2],this.powerList[2],this.powerList[1]],
+            "area1": [this.powerList[3], this.powerList[2],this.powerList[2],this.powerList[2],this.powerList[2],this.powerList[2],this.powerList[1]],
             // "area2": [this.powerList[2], this.powerList[2],this.powerList[2],this.powerList[2],this.powerList[2],this.powerList[2],this.powerList[2],this.powerList[1],],
             // "area3": [this.powerList[2], this.powerList[2],this.powerList[2],this.powerList[2],this.powerList[2],this.powerList[2], this.powerList[1]],
         }
+
+        this.teamObjects = new TeamObjects(this.powerList);
+
 
         this.startArea = "area1";
         this.defaultStartingPoints = {
@@ -86,10 +87,10 @@ class GridSystem {
         };
 
         //this.extraArr = ["TCR", "LOK", "LK", "JHA", "JV", "CJH", "SZF", "JHA", "TJY", "KX"];
-        this.extraArr = ["TCR", "JX", "JZ", "TWN", "LJY", "ELI", "CUR", "LSH", "CT", "LK", "JV"];
+        //this.extraArr = ["TCR", "JX", "JZ", "TWN", "LJY", "ELI", "CUR", "LSH", "CT", "LK", "JV"];
         //this.extraArr = ["TCR", "CUR", "CT", "ELI", "JZ", "LJY", "TWN", "RYD", "JX", "LK", "JV"];
         // this.extraArr = ["TCR", "LOK", "JHA", "KN", "JT", "CJH", "CED", "KX", "TJY", "LSH", "SZF"];
-        //this.extraArr = ["TCR", "LOK", "JHA", "KN", "JT", "CJH", "CED", "KX", "TJY", "RYD", "SZF"];
+        this.extraArr = ["TCR", "LOK", "JHA", "KN", "JT", "CJH", "CED", "KX", "TJY", "RYD", "SZF"];
 
         //this.p1 = { x: 1, y: 1, lable: 2, id: this.extraArr[0], steps: this.startingSteps, area: "mainArea", wallet: 0, total: 0, storeSteps: 1000 };
         // this.playersArr = [this.p1, this.p2, this.p3, this.p4, this.p5, this.p6, this.p7, this.p8, this.p9, this.p10];
@@ -132,7 +133,7 @@ class GridSystem {
             
             this.setStartingPointMultiLevel(player);
 
-            this.setStartingPowersMultiLevel(player);
+            // this.setStartingPowersMultiLevel(player);
 
             this.startingPoint(player);
         });
@@ -146,6 +147,15 @@ class GridSystem {
         // const playerKey = Object.keys(this).find(key => this[key] === findThisObj);
 
         this.mapDefaultPowers[this.startArea].forEach(power => {
+            player.obtainedPowers.push(power);
+        });
+
+    }
+    setStartingPowersByTeam (player) {
+        player.obtainedPowers = [];
+        if (this.teamObjects.defaultPowersByTeam[player.team] === undefined) return;
+
+        this.teamObjects.defaultPowersByTeam[player.team].forEach(power => {
             player.obtainedPowers.push(power);
         });
 
@@ -367,6 +377,7 @@ class GridSystem {
 
         this.teamObjects[teamSettings[team].teamSlot].push(plyrSlot.id);
         this.placePlayerAccordingToTeam(plyrSlot, teamSettings[team].teamNum);
+        this.setStartingPowersByTeam(plyrSlot);
         
     }
     clearPlayerTeam(plyrSlot) {
@@ -423,8 +434,8 @@ class GridSystem {
             getPlayerObject.obtainedPowers = [];
             getPlayerObject.canUseEagleEye = false;
             getPlayerObject.steps = 0;
-            getPlayerObject.getAwardedSteps = 0;
             getPlayerObject.team = "1";
+            getPlayerObject.deactivateEagleEye();
             this.placePlayerAccordingToTeam(getPlayerObject, 1);
         });
         this.teamObjects.team2Slots.forEach((playerId) => {
@@ -432,8 +443,8 @@ class GridSystem {
             getPlayerObject.obtainedPowers = [];
             getPlayerObject.canUseEagleEye = false;
             getPlayerObject.steps = 0;
-            getPlayerObject.getAwardedSteps = 0;
             getPlayerObject.team = "2";
+            getPlayerObject.deactivateEagleEye();
             this.placePlayerAccordingToTeam(getPlayerObject, 2);
             
         });
@@ -577,7 +588,6 @@ io.sockets.on('connection', function (sock) {
     sock.on('moveAwardedStepsToActualSteps', () => {
         gridSystem.playersArr.forEach((player) => {
             player.steps = player.stepsAwardedBeforeGameStarts;
-            player.stepsAwardedBeforeGameStarts = 0;
         });
         gridSystem.emitToUsers('sendMatrix');
     });
@@ -601,6 +611,17 @@ io.sockets.on('connection', function (sock) {
         getPlayerObject.stepsAwardedBeforeGameStarts += parseInt(data.getNum);
         const message2 = data.studentId + " awarded " + data.getNum + " steps succesful!"
         io.emit('chat-to-clients', message2);
+    });
+
+    sock.on('penalties', data => {
+        if (gridSystem.teamObjects.penalties[data.getNum] === undefined) return;
+
+        const getPlayerObject = gridSystem.playersArr.find(object => object.id === data.studentId);
+
+        getPlayerObject[gridSystem.teamObjects.penalties[data.getNum]]();
+        const message2 = `Penalty ${data.studentId} code:${data.getNum}, steps:${getPlayerObject.stepsAwardedBeforeGameStarts} pwrs:${getPlayerObject.obtainedPowers.length}`;
+        io.emit('chat-to-clients', message2);
+
     });
 
 
