@@ -368,11 +368,12 @@ class GridSystem {
         }
         
         const teamSettings = {
-            "1": {teamSlot: "team1Slots", teamNum: 1},
-            "2": {teamSlot: "team2Slots", teamNum: 2},
+            "1": {teamSlot: "team1Slots", teamNum: 1, color: "white"},
+            "2": {teamSlot: "team2Slots", teamNum: 2, color: "springgreen"},
         }
         if (teamSettings[team] === undefined) {return}
         plyrSlot.team = team;
+        plyrSlot.color = teamSettings[team].color;
         //plyrSlot.obtainedPowers.push(this.powerList[1]);
 
         this.teamObjects[teamSettings[team].teamSlot].push(plyrSlot.id);
@@ -435,7 +436,9 @@ class GridSystem {
             getPlayerObject.canUseEagleEye = false;
             getPlayerObject.steps = 0;
             getPlayerObject.team = "1";
+            getPlayerObject.color = "white";
             getPlayerObject.deactivateEagleEye();
+            this.setStartingPowersByTeam(getPlayerObject);
             this.placePlayerAccordingToTeam(getPlayerObject, 1);
         });
         this.teamObjects.team2Slots.forEach((playerId) => {
@@ -444,7 +447,9 @@ class GridSystem {
             getPlayerObject.canUseEagleEye = false;
             getPlayerObject.steps = 0;
             getPlayerObject.team = "2";
+            getPlayerObject.color = "springgreen";
             getPlayerObject.deactivateEagleEye();
+            this.setStartingPowersByTeam(getPlayerObject);
             this.placePlayerAccordingToTeam(getPlayerObject, 2);
             
         });
