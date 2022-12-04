@@ -75,9 +75,9 @@ class AllMatrixes {
             ],
             title: "Area 2",
             doors: [
-                { x: 4, y: 19, toArea: "area1", appearingCoords: { x: 21, y: 11 } },
-                { x: 20, y: 19, toArea: "area1", appearingCoords: { x: 25, y: 11 } },
-                { x: 30, y: 19, toArea: "area1", appearingCoords: { x: 29, y: 11 } },
+                // { x: 4, y: 19, toArea: "area1", appearingCoords: { x: 21, y: 11 } },
+                // { x: 20, y: 19, toArea: "area1", appearingCoords: { x: 25, y: 11 } },
+                // { x: 30, y: 19, toArea: "area1", appearingCoords: { x: 29, y: 11 } },
                 { x: 4, y: 1, toArea: "area3", appearingCoords: { x: 5, y: 18 } },
                 { x: 20, y: 1, toArea: "area3", appearingCoords: { x: 17, y: 18 } },
                 { x: 30, y: 1, toArea: "area3", appearingCoords: { x: 27, y: 18 } },

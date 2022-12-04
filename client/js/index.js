@@ -104,6 +104,7 @@ function createChatDivs() {
     chatSec.appendChild(chatDiv);
 
     var chatInput = document.createElement('input');
+    
     //chatInput.className = "form-control";
     chatInput.style.width = "205px";
     chatInput.style.height = "45px";
@@ -271,6 +272,8 @@ document.addEventListener("keyup", (e) => {
     //e.view.event.preventDefault();
     //sock.emit('keyPress', e.keyCode);
 });
+
+document.getElementById("chatinput").focus();
 
 //============================================================================================================
 
